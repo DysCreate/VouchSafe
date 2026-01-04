@@ -31,6 +31,7 @@ async function seed() {
 
     await EmployeeProfile.create({
       userId: emp1._id,
+      designation: 'Plumber',
       skills: ['plumber', 'pipe repair', 'drain cleaning'],
       trustScore: 85,
       completedJobs: 12,
@@ -49,6 +50,7 @@ async function seed() {
 
     await EmployeeProfile.create({
       userId: emp2._id,
+      designation: 'Electrician',
       skills: ['electrician', 'wiring', 'lighting'],
       trustScore: 92,
       completedJobs: 18,
@@ -67,6 +69,7 @@ async function seed() {
 
     await EmployeeProfile.create({
       userId: emp3._id,
+      designation: 'Carpenter',
       skills: ['carpenter', 'woodwork', 'furniture'],
       trustScore: 78,
       completedJobs: 9,

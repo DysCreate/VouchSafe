@@ -24,6 +24,9 @@ function EmployeeProfile() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-4">{profile.userId?.name || 'Employee'}</h1>
+      {profile.designation && (
+        <p className="text-xl font-semibold text-blue-600 mb-3">{profile.designation}</p>
+      )}
       <TrustBadge score={profile.trustScore || 0} />
       <p className="mt-4 text-gray-700">Skills: {profile.skills?.join(', ') || 'N/A'}</p>
       <p className="text-gray-700">Completed Jobs: {profile.completedJobs || 0}</p>

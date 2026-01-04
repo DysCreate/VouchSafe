@@ -6,7 +6,7 @@ const EmployeeProfile = require('../models/EmployeeProfile');
 const JWT_SECRET = process.env.JWT_SECRET || 'secretdev';
 
 async function register(req, res) {
-  const { name, email, password, role, phone, location } = req.body;
+  const { name, email, password, role, phone, location, designation } = req.body;
   try {
     if (!name || !email || !password || !role) return res.status(400).json({ message: 'Missing fields' });
     const existing = await User.findOne({ email });
@@ -15,7 +15,7 @@ async function register(req, res) {
     const user = await User.create({ name, email, password: hashed, role, phone, location });
 
     if (role === 'EMPLOYEE') {
-      await EmployeeProfile.create({ userId: user._id });
+      await EmployeeProfile.create({ userId: user._id, designation: designation || '' });
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '30d' });

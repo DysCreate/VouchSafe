@@ -5,10 +5,19 @@ function JobRequestCard({ job, onAccept, onReject, onComplete }) {
   const isCompleted = job.status === 'COMPLETED';
   const isPending = job.status === 'REQUESTED';
 
+  const getStatusBadge = () => {
+    if (isCompleted) return <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span>;
+    if (isAccepted) return <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Accepted</span>;
+    if (isPending) return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">Pending</span>;
+    return <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">{job.status}</span>;
+  };
+
   return (
-    <div className="border p-4 rounded-lg shadow">
-      <h4 className="font-bold">{job.service}</h4>
-      <p className="text-sm text-gray-600">Status: {job.status}</p>
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-md transition-all">
+      <div className="flex items-start justify-between mb-4">
+        <h4 className="font-bold text-lg text-gray-900">{job.service}</h4>
+        {getStatusBadge()}
+      </div>
       {job.employerId && (
         <div className="text-sm mt-2">
           {isAccepted || isCompleted ? (
@@ -35,27 +44,27 @@ function JobRequestCard({ job, onAccept, onReject, onComplete }) {
           )}
         </div>
       )}
-      <div className="mt-3 space-x-2">
+      <div className="mt-4 flex gap-3">
         {isPending && onAccept && (
           <button
             onClick={() => onAccept(job._id)}
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+            className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow hover:shadow-md"
           >
-            Accept
+            Accept Job
           </button>
         )}
         {isPending && onReject && (
           <button
             onClick={() => onReject(job._id)}
-            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+            className="flex-1 bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition-all"
           >
-            Reject
+            Decline
           </button>
         )}
         {isAccepted && onComplete && (
           <button
             onClick={() => onComplete(job._id)}
-            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            className="flex-1 bg-gradient-to-r from-teal-600 to-cyan-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:from-teal-700 hover:to-cyan-700 transition-all shadow hover:shadow-md"
           >
             Mark Complete
           </button>

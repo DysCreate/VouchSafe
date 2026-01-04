@@ -3,11 +3,12 @@ const User = require('../models/User');
 const Job = require('../models/Job');
 
 async function search(req, res) {
-  const { skill, minTrust } = req.query;
+  const { skill, designation, minTrust } = req.query;
   const min = Number(minTrust) || 0;
   try {
     const query = { trustScore: { $gte: min } };
     if (skill) query.skills = { $in: [skill] };
+    if (designation) query.designation = new RegExp(designation, 'i');
     const profiles = await EmployeeProfile.find(query).sort({ trustScore: -1 }).limit(50).populate('userId', 'name location');
     res.json(profiles);
   } catch (err) {
