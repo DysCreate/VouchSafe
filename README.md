@@ -149,10 +149,3 @@ frontend/
 
 ---
 
-## ✅ Ready for Hackathon Demo
-
-- Clean, commented, production-style code
-- Role-based dashboards
-- Trust Score prominently displayed
-- Contact details shown only after job acceptance
-- Real-time job status updates

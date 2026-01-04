@@ -120,10 +120,10 @@ function Login() {
             </p>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
-                JD
+                S
               </div>
               <div>
-                <p className="font-semibold">John Doe</p>
+                <p className="font-semibold">Sasi</p>
                 <p className="text-sm text-teal-100">Professional Plumber</p>
               </div>
             </div>
