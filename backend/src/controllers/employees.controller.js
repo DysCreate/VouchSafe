@@ -2,6 +2,7 @@ const EmployeeProfile = require('../models/EmployeeProfile');
 const User = require('../models/User');
 const Job = require('../models/Job');
 const Vouch = require('../models/Vouch');
+const DisasterState = require('../models/DisasterState');
 
 async function search(req, res) {
   const { skill, designation, minTrust } = req.query;
@@ -55,4 +56,64 @@ async function dashboard(req, res) {
   }
 }
 
-module.exports = { search, profile, dashboard };
+// Volunteer as Community Hero
+async function volunteerAsHero(req, res) {
+  try {
+    const userId = req.user._id;
+    
+    // Check if Community Hero mode is active
+    const disasterState = await DisasterState.findOne();
+    if (!disasterState || !disasterState.isCommunityHeroActive) {
+      return res.status(403).json({ message: 'Community Hero mode is not active' });
+    }
+    
+    // Find or create employee profile
+    let profile = await EmployeeProfile.findOne({ userId });
+    if (!profile) {
+      profile = await EmployeeProfile.create({ userId, designation: '' });
+    }
+    
+    profile.isCommunityHero = true;
+    profile.communityHeroSince = new Date();
+    await profile.save();
+    
+    console.log(`Employee ${userId} volunteered as Community Hero`);
+    
+    res.json({ 
+      message: 'Successfully volunteered as Community Hero',
+      profile 
+    });
+  } catch (error) {
+    console.error('Volunteer as hero error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+// Withdraw from Community Hero
+async function withdrawFromHero(req, res) {
+  try {
+    const userId = req.user._id;
+    
+    // Find or create employee profile
+    let profile = await EmployeeProfile.findOne({ userId });
+    if (!profile) {
+      profile = await EmployeeProfile.create({ userId, designation: '' });
+    }
+    
+    profile.isCommunityHero = false;
+    profile.communityHeroSince = null;
+    await profile.save();
+    
+    console.log(`Employee ${userId} withdrew from Community Hero`);
+    
+    res.json({ 
+      message: 'Successfully withdrew from Community Hero program',
+      profile 
+    });
+  } catch (error) {
+    console.error('Withdraw from hero error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+module.exports = { search, profile, dashboard, volunteerAsHero, withdrawFromHero };

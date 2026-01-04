@@ -7,6 +7,7 @@ const employeesRoutes = require('./routes/employees.routes');
 const employersRoutes = require('./routes/employers.routes');
 const jobsRoutes = require('./routes/jobs.routes');
 const vouchesRoutes = require('./routes/vouches.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/employees', employeesRoutes);
 app.use('/api/employers', employersRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/vouches', vouchesRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => res.json({ ok: true, name: 'VouchSafe API' }));
 

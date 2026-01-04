@@ -8,7 +8,9 @@ const employeeProfileSchema = new Schema({
   trustScore: { type: Number, default: 0 },
   completedJobs: { type: Number, default: 0 },
   availability: { type: Boolean, default: true },
-  lastActiveAt: { type: Date, default: Date.now }
+  lastActiveAt: { type: Date, default: Date.now },
+  isCommunityHero: { type: Boolean, default: false },
+  communityHeroSince: { type: Date, default: null }
 });
 
 module.exports = mongoose.model('EmployeeProfile', employeeProfileSchema);

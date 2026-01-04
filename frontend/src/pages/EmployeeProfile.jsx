@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getEmployeeProfile } from '../services/api';
 import TrustBadge from '../components/TrustBadge';
+import CommunityHeroBadge from '../components/CommunityHeroBadge';
 
 function EmployeeProfile() {
   const { id } = useParams();
@@ -64,7 +65,12 @@ function EmployeeProfile() {
               {profile.designation && (
                 <p className="text-xl font-semibold text-teal-600 mb-3">{profile.designation}</p>
               )}
-              <TrustBadge score={profile.trustScore || 0} />
+              <div className="flex items-center gap-3">
+                <TrustBadge score={profile.trustScore || 0} />
+                {profile.isCommunityHero && (
+                  <CommunityHeroBadge since={profile.communityHeroSince} size="medium" />
+                )}
+              </div>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4 pt-6 border-t">
