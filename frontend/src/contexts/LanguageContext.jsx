@@ -127,6 +127,11 @@ const malayalamTranslations = {
   'Send Job Request': 'ജോലി അഭ്യർത്ഥന അയയ്ക്കുക',
   'Jobs Completed': 'പൂർത്തിയാക്കിയ ജോലികൾ',
   
+  // Sorting
+  'Sort by': 'ക്രമീകരിക്കുക',
+  'High to Low': 'ഉയർന്നത് മുതൽ താഴ്ന്നത് വരെ',
+  'Low to High': 'താഴ്ന്നത് മുതൽ ഉയർന്നത് വരെ',
+  
   // Employee Profile
   'Employee Profile': 'ജീവനക്കാരന്റെ പ്രൊഫൈൽ',
   'Skills': 'കഴിവുകൾ',

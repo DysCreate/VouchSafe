@@ -32,6 +32,8 @@ function EmployeeDashboard() {
   const fetchDashboard = async () => {
     try {
       const res = await getEmployeeDashboard();
+      console.log('Dashboard data:', res.data);
+      console.log('Incoming jobs:', res.data.incoming);
       setData(res.data);
     } catch (err) {
       console.error(err);

@@ -8,14 +8,35 @@ function SearchEmployees() {
   const { tSync } = useLanguage();
   const [designation, setDesignation] = useState('');
   const [results, setResults] = useState([]);
+  const [sortBy, setSortBy] = useState('trust-desc'); // 'trust-desc', 'trust-asc', 'name'
 
   const handleSearch = async () => {
     try {
       const res = await searchEmployees({ designation });
-      setResults(res.data);
+      const sorted = sortEmployees(res.data, sortBy);
+      setResults(sorted);
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const sortEmployees = (employees, sortType) => {
+    const sorted = [...employees];
+    switch (sortType) {
+      case 'trust-desc':
+        return sorted.sort((a, b) => (b.profile?.trustScore || 0) - (a.profile?.trustScore || 0));
+      case 'trust-asc':
+        return sorted.sort((a, b) => (a.profile?.trustScore || 0) - (b.profile?.trustScore || 0));
+      case 'name':
+        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      default:
+        return sorted;
+    }
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortBy(newSort);
+    setResults(sortEmployees(results, newSort));
   };
 
   const handleSendRequest = async (employeeId) => {
@@ -114,10 +135,22 @@ function SearchEmployees() {
           </div>
 
           {results.length > 0 && (
-            <div className="mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <p className="text-gray-600">
                 <span className="font-semibold text-gray-900">{results.length}</span> {tSync('employees found')}
               </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">{tSync('Sort by')}:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent transition bg-white"
+                >
+                  <option value="trust-desc">{tSync('Trust Score')} ({tSync('High to Low')})</option>
+                  <option value="trust-asc">{tSync('Trust Score')} ({tSync('Low to High')})</option>
+                  <option value="name">{tSync('Name')} (A-Z)</option>
+                </select>
+              </div>
             </div>
           )}
 
