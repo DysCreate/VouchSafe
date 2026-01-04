@@ -19,5 +19,6 @@ export const acceptJob = (id) => API.post(`/jobs/${id}/accept`);
 export const rejectJob = (id) => API.post(`/jobs/${id}/reject`);
 export const completeJob = (id) => API.post(`/jobs/${id}/complete`);
 export const createVouch = (data) => API.post('/vouches/create', data);
+export const getEmployeeVouches = (employeeId) => API.get(`/vouches/employee/${employeeId}`);
 
 export default API;
