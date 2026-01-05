@@ -13,15 +13,29 @@ async function search(req, res) {
     if (designation) query.designation = new RegExp(designation, 'i');
     const profiles = await EmployeeProfile.find(query).sort({ trustScore: -1 }).limit(50).populate('userId', 'name location');
     
-    // Add vouch count to each profile
-    const profilesWithVouches = await Promise.all(
+    // Filter out employees with active (ACCEPTED) jobs
+    const availableProfiles = await Promise.all(
       profiles.map(async (profile) => {
+        // Check if employee has any active jobs
+        const activeJobs = await Job.countDocuments({ 
+          employeeId: profile.userId._id, 
+          status: 'ACCEPTED' 
+        });
+        
+        // Skip this employee if they have active jobs
+        if (activeJobs > 0) {
+          return null;
+        }
+        
         const vouchCount = await Vouch.countDocuments({ toEmployeeId: profile.userId._id });
         return { ...profile.toObject(), vouchCount };
       })
     );
     
-    res.json(profilesWithVouches);
+    // Remove null entries (employees with active jobs)
+    const filteredProfiles = availableProfiles.filter(profile => profile !== null);
+    
+    res.json(filteredProfiles);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
