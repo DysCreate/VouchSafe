@@ -74,6 +74,12 @@ function EmployeeProfile() {
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4 pt-6 border-t">
+            {profile.hourlyWage && (
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Hourly Wage</p>
+                <p className="text-green-600 font-bold text-lg">₹{profile.hourlyWage}/hr</p>
+              </div>
+            )}
             <div>
               <p className="text-sm text-gray-600 mb-1">Skills</p>
               <p className="text-gray-900 font-medium">{profile.skills?.join(', ') || 'N/A'}</p>

@@ -130,4 +130,31 @@ async function withdrawFromHero(req, res) {
   }
 }
 
-module.exports = { search, profile, dashboard, volunteerAsHero, withdrawFromHero };
+// Update employee profile (designation, skills, wage)
+async function updateProfile(req, res) {
+  try {
+    const userId = req.user._id;
+    const { designation, skills, hourlyWage } = req.body;
+    
+    let profile = await EmployeeProfile.findOne({ userId });
+    if (!profile) {
+      profile = await EmployeeProfile.create({ userId });
+    }
+    
+    if (designation !== undefined) profile.designation = designation;
+    if (skills !== undefined) profile.skills = skills;
+    if (hourlyWage !== undefined) profile.hourlyWage = hourlyWage;
+    
+    await profile.save();
+    
+    res.json({ 
+      message: 'Profile updated successfully',
+      profile 
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+module.exports = { search, profile, dashboard, volunteerAsHero, withdrawFromHero, updateProfile };

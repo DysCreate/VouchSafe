@@ -10,7 +10,9 @@ const employeeProfileSchema = new Schema({
   availability: { type: Boolean, default: true },
   lastActiveAt: { type: Date, default: Date.now },
   isCommunityHero: { type: Boolean, default: false },
-  communityHeroSince: { type: Date, default: null }
+  communityHeroSince: { type: Date, default: null },
+  hourlyWage: { type: Number, default: null },
+  currency: { type: String, default: 'INR' }
 });
 
 module.exports = mongoose.model('EmployeeProfile', employeeProfileSchema);

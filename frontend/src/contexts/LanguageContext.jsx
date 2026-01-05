@@ -132,6 +132,14 @@ const malayalamTranslations = {
   'High to Low': 'ഉയർന്നത് മുതൽ താഴ്ന്നത് വരെ',
   'Low to High': 'താഴ്ന്നത് മുതൽ ഉയർന്നത് വരെ',
   
+  // Profile Settings
+  'Profile Settings': 'പ്രൊഫൈൽ ക്രമീകരണങ്ങൾ',
+  'Edit Profile': 'പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യുക',
+  'Save Changes': 'മാറ്റങ്ങൾ സംരക്ഷിക്കുക',
+  'Hourly Wage': 'മണിക്കൂർ വേതനം',
+  'Enter hourly rate': 'മണിക്കൂർ നിരക്ക് നൽകുക',
+  'Visible to employers during search': 'തിരയൽ സമയത്ത് തൊഴിലുടമകൾക്ക് ദൃശ്യമാണ്',
+  
   // Employee Profile
   'Employee Profile': 'ജീവനക്കാരന്റെ പ്രൊഫൈൽ',
   'Skills': 'കഴിവുകൾ',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEmployeeDashboard, acceptJob, rejectJob, completeJob } from '../services/api';
+import { getEmployeeDashboard, acceptJob, rejectJob, completeJob, updateEmployeeProfile } from '../services/api';
 import { useLanguage } from '../contexts/LanguageContext';
 import LanguageToggle from '../components/LanguageToggle';
 import JobRequestCard from '../components/JobRequestCard';
@@ -11,6 +11,8 @@ function EmployeeDashboard() {
   const [data, setData] = useState(null);
   const [disasterState, setDisasterState] = useState(null);
   const [volunteerLoading, setVolunteerLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [profileForm, setProfileForm] = useState({ designation: '', hourlyWage: '' });
   const { language, tSync, preloadTranslations } = useLanguage();
 
   useEffect(() => { 
@@ -35,6 +37,12 @@ function EmployeeDashboard() {
       console.log('Dashboard data:', res.data);
       console.log('Incoming jobs:', res.data.incoming);
       setData(res.data);
+      if (res.data.profile) {
+        setProfileForm({
+          designation: res.data.profile.designation || '',
+          hourlyWage: res.data.profile.hourlyWage || ''
+        });
+      }
     } catch (err) {
       console.error(err);
     }
@@ -108,6 +116,20 @@ function EmployeeDashboard() {
       fetchDashboard();
     } catch (err) {
       alert('Error completing job');
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      await updateEmployeeProfile({
+        designation: profileForm.designation,
+        hourlyWage: profileForm.hourlyWage ? Number(profileForm.hourlyWage) : null
+      });
+      setEditMode(false);
+      fetchDashboard();
+      alert('Profile updated successfully!');
+    } catch (err) {
+      alert('Error updating profile');
     }
   };
 
@@ -233,50 +255,130 @@ function EmployeeDashboard() {
 
           {/* Stats Cards */}
           {data.profile && (
-            <div className="grid md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-sm font-medium text-gray-700">{tSync('Designation')}</p>
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+            <>
+              {/* Profile Edit Section */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">{tSync('Profile Settings')}</h3>
+                  {!editMode && (
+                    <button
+                      onClick={() => setEditMode(true)}
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+                    >
+                      {tSync('Edit Profile')}
+                    </button>
+                  )}
                 </div>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{data.profile.designation || 'Not Set'}</p>
+                
+                {editMode ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {tSync('Designation')}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={tSync('e.g., Plumber, Tailor, Electrician')}
+                        value={profileForm.designation}
+                        onChange={(e) => setProfileForm({ ...profileForm, designation: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {tSync('Hourly Wage')} (₹)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder={tSync('Enter hourly rate')}
+                        value={profileForm.hourlyWage}
+                        onChange={(e) => setProfileForm({ ...profileForm, hourlyWage: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">{tSync('Visible to employers during search')}</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleSaveProfile}
+                        className="px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition font-semibold"
+                      >
+                        {tSync('Save Changes')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditMode(false);
+                          setProfileForm({
+                            designation: data.profile.designation || '',
+                            hourlyWage: data.profile.hourlyWage || ''
+                          });
+                        }}
+                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold"
+                      >
+                        {tSync('Cancel')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">{tSync('Designation')}</p>
+                      <p className="text-lg font-semibold text-gray-900">{data.profile.designation || 'Not Set'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">{tSync('Hourly Wage')}</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {data.profile.hourlyWage ? `₹${data.profile.hourlyWage}/hr` : 'Not Set'}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-sm font-medium text-gray-700">{tSync('Jobs Done')}</p>
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              <div className="grid md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-700">{tSync('Designation')}</p>
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">{data.profile.designation || 'Not Set'}</p>
                 </div>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{data.profile.completedJobs || 0}</p>
-                <p className="text-xs text-gray-600">{tSync('Total completed')}</p>
-              </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-sm font-medium text-gray-700">{tSync('Active Jobs')}</p>
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-700">{tSync('Jobs Done')}</p>
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">{data.profile.completedJobs || 0}</p>
+                  <p className="text-xs text-gray-600">{tSync('Total completed')}</p>
                 </div>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{data.incoming?.filter(j => j.status === 'ACCEPTED').length || 0}</p>
-                <p className="text-xs text-gray-600">{tSync('In progress')}</p>
-              </div>
 
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl p-5 text-white">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-sm font-medium">{tSync('Trust Score')}</p>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-700">{tSync('Active Jobs')}</p>
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">{data.incoming?.filter(j => j.status === 'ACCEPTED').length || 0}</p>
+                  <p className="text-xs text-gray-600">{tSync('In progress')}</p>
                 </div>
-                <p className="text-3xl font-bold mb-1">{data.profile.trustScore || 0}</p>
-                <p className="text-xs opacity-90">{tSync('Your rating')}</p>
+
+                <div className="bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl p-5 text-white">
+                  <div className="flex items-start justify-between mb-3">
+                    <p className="text-sm font-medium">{tSync('Trust Score')}</p>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold mb-1">{data.profile.trustScore || 0}</p>
+                  <p className="text-xs opacity-90">{tSync('Your rating')}</p>
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {/* Job Requests */}

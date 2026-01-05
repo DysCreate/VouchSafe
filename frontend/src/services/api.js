@@ -13,6 +13,7 @@ export const login = (data) => API.post('/auth/login', data);
 export const searchEmployees = (params) => API.get('/employees/search', { params });
 export const getEmployeeProfile = (id) => API.get(`/employees/profile/${id}`);
 export const getEmployeeDashboard = () => API.get('/employees/dashboard');
+export const updateEmployeeProfile = (data) => API.put('/employees/profile', data);
 export const getEmployerDashboard = () => API.get('/employers/dashboard');
 export const sendJobRequest = (data) => API.post('/employers/job-request', data);
 export const acceptJob = (id) => API.post(`/jobs/${id}/accept`);
